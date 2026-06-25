@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout – Top Dollar Expert Advisors</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0a0c0f;
+  --surface:  #111418;
+  --card:     #161b22;
+  --border:   #1e2530;
+  --cyan:     #00d4ff;
+  --green:    #00e676;
+  --yellow:   #ffc107;
+  --red:      #ff4757;
+  --text:     #e8ecf0;
+  --muted:    #6b7a90;
+  --display:  'Bebas Neue', sans-serif;
+  --body:     'Inter', sans-serif;
+  --mono:     'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 48px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,12,15,.95);
+  position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(12px);
+}
+.logo { font-family: var(--display); font-size: 1.6rem; letter-spacing: 1px; color: var(--text); text-decoration: none; }
+.logo span { color: var(--cyan); }
+.nav-back {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--muted); font-size: .85rem; text-decoration: none;
+  transition: color .2s;
+}
+.nav-back:hover { color: var(--cyan); }
+
+/* LAYOUT */
+.checkout-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 56px 48px;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* LEFT — PLAN SELECTOR */
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--display);
+  font-size: 2.4rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+.section-title span { color: var(--cyan); }
+.section-sub {
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.6;
+  margin-bottom: 36px;
+}
+
+/* Plan cards */
+.plans { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+
+.plan-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 24px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+  user-select: none;
+}
+.plan-card:hover { border-color: rgba(0,212,255,.4); }
+.plan-card.selected {
+  border-color: var(--cyan);
+  background: rgba(0,212,255,.04);
+}
+.plan-card.recommended { border-color: var(--green); }
+.plan-card.recommended.selected { border-color: var(--green); background: rgba(0,230,118,.04); }
+
+.plan-badge {
+  position: absolute;
+  top: -11px; right: 18px;
+  font-family: var(--mono);
+  font-size: .65rem;
+  letter-spacing: 1.5px;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.badge-best { background: var(--green); color: #000; }
+.badge-popular { background: var(--cyan); color: #000; }
+
+.plan-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.plan-name {
+  font-family: var(--display);
+  font-size: 1.35rem;
+  letter-spacing: .5px;
+}
+.plan-price-wrap { text-align: right; }
+.plan-price {
+  font-family: var(--display);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--cyan);
+}
+.plan-price-note {
+  font-size: .72rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-top: 2px;
+}
+
+.plan-desc { font-size: .83rem; color: var(--muted); line-height: 1.55; margin-bottom: 14px; }
+
+.plan-perks { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.plan-perks li {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: .82rem; color: var(--text);
+}
+.perk-check { color: var(--green); flex-shrink: 0; margin-top: 1px; }
+.perk-check.warn { color: var(--yellow); }
+
+/* Radio indicator */
+.plan-radio {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all .2s;
+  position: relative;
+}
+.plan-card.selected .plan-radio {
+  border-color: var(--cyan);
+}
+.plan-card.selected .plan-radio::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+.plan-card.recommended.selected .plan-radio { border-color: var(--green); }
+.plan-card.recommended.selected .plan-radio::after { background: var(--green); }
+
+.plan-top-left { display: flex; align-items: center; gap: 12px; }
+
+/* Add-on */
+.addon-section { margin-bottom: 32px; }
+.addon-title {
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.addon-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: border-color .2s;
+  user-select: none;
+}
+.addon-card:hover { border-color: rgba(255,193,7,.4); }
+.addon-card.selected { border-color: var(--yellow); background: rgba(255,193,7,.04); }
+.addon-checkbox {
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  font-size: .8rem;
+}
+.addon-card.selected .addon-checkbox {
+  background: var(--yellow);
+  border-color: var(--yellow);
+  color: #000;
+}
+.addon-info { flex: 1; }
+.addon-name { font-weight: 600; font-size: .92rem; margin-bottom: 3px; }
+.addon-desc { font-size: .78rem; color: var(--muted); }
+.addon-price {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  color: var(--yellow);
+}
+
+/* RIGHT — PAYMENT */
+.payment-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  position: sticky;
+  top: 90px;
+}
+
+.order-summary {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.order-summary-title {
+  font-family: var(--mono);
+  font-size: .68rem;
+  color: var(--muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.order-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: .88rem;
+}
+.order-line .label { color: var(--muted); }
+.order-line .value { font-weight: 600; }
+.order-divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.order-total .label { font-weight: 600; font-size: .95rem; }
+.order-total .value {
+  font-family: var(--display);
+  font-size: 1.8rem;
+  color: var(--cyan);
+}
+
+/* Processor tabs */
+.processor-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.proc-tab {
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--body);
+  font-size: .85rem;
+  font-weight: 600;
+  transition: all .2s;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.proc-tab:hover { color: var(--text); }
+.proc-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); background: rgba(0,212,255,.04); }
+.proc-icon { font-size: 1.3rem; }
+.proc-label { font-size: .72rem; font-family: var(--mono); letter-spacing: 1px; }
+
+/* Payment forms */
+.payment-body { padding: 24px; }
+
+.proc-panel { display: none; }
+.proc-panel.active { display: block; }
+
+/* Coinbase */
+.coinbase-info {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.coinbase-logo {
+  width: 36px; height: 36px;
+  background: #0052FF;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.coinbase-text { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+.coinbase-text strong { color: var(--text); }
+
+.pay-input-label {
+  font-family: var(--mono);
+  font-size: .68rem;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+  display: block;
+}
+.pay-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: .9rem;
+  outline: none;
+  transition: border-color .2s;
+  margin-bottom: 14px;
+}
+.pay-input:focus { border-color: var(--cyan); }
+.pay-input::placeholder { color: var(--muted); }
+
+.pay-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  font-family: var(--display);
+  font-size: 1.15rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.pay-btn:active { transform: scale(.99); }
+.btn-coinbase { background: #0052FF; color: #fff; }
+.btn-coinbase:hover { opacity: .88; }
+.btn-nowpay { background: var(--cyan); color: #000; }
+.btn-nowpay:hover { opacity: .88; }
+
+/* NOWPayments coin grid */
+.coin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.coin-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.coin-chip:hover { border-color: rgba(0,212,255,.4); }
+.coin-chip.active { border-color: var(--cyan); background: rgba(0,212,255,.08); }
+.coin-emoji { font-size: 1.3rem; }
+.coin-name { font-family: var(--mono); font-size: .6rem; color: var(--muted); letter-spacing: 1px; }
+.coin-chip.active .coin-name { color: var(--cyan); }
+
+.more-coins {
+  text-align: center;
+  font-size: .75rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.more-coins span { color: var(--cyan); cursor: pointer; }
+
+/* Security badges */
+.security-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  margin-top: 18px;
+}
+.sec-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  color: var(--muted);
+}
+.sec-icon { font-size: .9rem; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(6px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  animation: popIn .25s ease;
+}
+@keyframes popIn {
+  from { transform: scale(.94); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.modal-icon { font-size: 3rem; margin-bottom: 16px; }
+.modal-title { font-family: var(--display); font-size: 2rem; margin-bottom: 10px; }
+.modal-title.cyan { color: var(--cyan); }
+.modal-text { font-size: .9rem; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+.modal-detail {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 24px;
+  font-family: var(--mono);
+  font-size: .82rem;
+  text-align: left;
+  line-height: 1.8;
+}
+.modal-detail .row { display: flex; justify-content: space-between; }
+.modal-detail .row .k { color: var(--muted); }
+.modal-detail .row .v { color: var(--text); font-weight: 600; }
+.modal-close {
+  background: var(--cyan);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 32px;
+  font-family: var(--display);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+/* Processing state */
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid rgba(255,255,255,.15);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Policy banner */
+.policy-banner {
+  background: rgba(255,71,87,.06);
+  border: 1px solid rgba(255,71,87,.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+.policy-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.policy-text { font-size: .8rem; color: var(--muted); line-height: 1.55; }
+.policy-text strong { color: var(--text); }
+
+/* Guarantee box */
+.guarantee-box {
+  background: rgba(0,230,118,.05);
+  border: 1px solid rgba(0,230,118,.2);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.guarantee-icon { font-size: 1.8rem; flex-shrink: 0; }
+.guarantee-title { font-weight: 700; font-size: .92rem; margin-bottom: 5px; color: var(--green); }
+.guarantee-text { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+
+/* Consent checkbox */
+.consent-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+.consent-box {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem;
+  transition: all .2s;
+}
+.consent-box.checked { background: var(--cyan); border-color: var(--cyan); color: #000; }
+.consent-text { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+.consent-text a { color: var(--cyan); cursor: pointer; }
+
+/* Steps */
+.steps-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 40px;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 48px;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.step.done { color: var(--green); }
+.step.active { color: var(--cyan); }
+.step-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: .7rem;
+  flex-shrink: 0;
+}
+.step.done .step-num { background: var(--green); border-color: var(--green); color: #000; }
+.step.active .step-num { background: var(--cyan); border-color: var(--cyan); color: #000; }
+.step-line { flex: 1; height: 1px; background: var(--border); margin: 0 10px; }
+
+@media (max-width: 900px) {
+  .checkout-wrap { grid-template-columns: 1fr; padding: 32px 20px; }
+  .payment-panel { position: static; }
+  nav { padding: 14px 20px; }
+  .steps-bar { padding: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">Top Dollar <span>EA</span></a>
+  <a class="nav-back" href="#">← Back to EA Store</a>
+</nav>
+
+<!-- STEPS -->
+<div class="steps-bar" style="margin-top:32px;">
+  <div class="step done">
+    <div class="step-num">✓</div>
+    <span>Select EA</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="step active">
+    <div class="step-num">2</div>
+    <span>Choose Plan</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <span>Pay Securely</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <span>Get Access</span>
+  </div>
+</div>
+
+<!-- MAIN CHECKOUT -->
+<div class="checkout-wrap">
+
+  <!-- LEFT: PLAN SELECTION -->
+  <div>
+    <div class="section-eyebrow">Pricing</div>
+    <div class="section-title">Choose Your <span>Plan</span></div>
+    <div class="section-sub">One purchase, two months of full support included. Upgrade to lifetime coverage and never pay maintenance again.</div>
+
+    <div class="plans">
+
+      <!-- Standard -->
+      <div class="plan-card" id="plan-standard" onclick="selectPlan('standard')">
+        <div class="plan-top">
+          <div class="plan-top-left">
+            <div class="plan-radio"></div>
+            <div class="plan-name">EA Purchase</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price">$97</div>
+            <div class="plan-price-note">one-time</div>
+          </div>
+        </div>
+        <div class="plan-desc">Full EA license with 2 months of support and free code upgrades for your first 6 months. After that, renew maintenance annually.</div>
+        <ul class="plan-perks">
+          <li><span class="perk-check">✓</span> Full EA license — yours to keep</li>
+          <li><span class="perk-check">✓</span> 2 months priority support included</li>
+          <li><span class="perk-check">✓</span> Free code upgrades for 6 months</li>
+          <li><span class="perk-check warn">⚠</span> $20/year maintenance after 6 months</li>
+        </ul>
+      </div>
+
+      <!-- Standard + Lifetime -->
+      <div class="plan-card recommended" id="plan-lifetime" onclick="selectPlan('lifetime')">
+        <div class="plan-badge badge-best">BEST VALUE</div>
+        <div class="plan-top">
+          <div class="plan-top-left">
+            <div class="plan-radio"></div>
+            <div class="plan-name">EA + Lifetime Insurance</div>
+          </div>
+          <div class="plan-price-wrap">
+            <div class="plan-price" style="color:var(--green)">$147</div>
+            <div class="plan-price-note">one-time · save forever</div>
+          </div>
+        </div>
+        <div class="plan-desc">Everything in EA Purchase, plus lifetime insurance — no annual fees, ever. Pay once and we cover upgrades and support for the life of the product.</div>
+        <ul class="plan-perks">
+          <li><span class="perk-check">✓</span> Full EA license — yours to keep</li>
+          <li><span class="perk-check">✓</span> 2 months priority support included</li>
+          <li><span class="perk-check">✓</span> Free code upgrades for 6 months</li>
+          <li><span class="perk-check">✓</span> Lifetime insurance — $0 maintenance forever</li>
+          <li><span class="perk-check">✓</span> Priority queue for all future updates</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ADD-ON (only shows for standard plan) -->
+    <div class="addon-section" id="addon-section" style="display:none;">
+      <div class="addon-title">Optional Add-on</div>
+      <div class="addon-card" id="addon-ins" onclick="toggleAddon()">
+        <div class="addon-checkbox" id="addon-check"></div>
+        <div class="addon-info">
+          <div class="addon-name">🛡️ Lifetime Insurance</div>
+          <div class="addon-desc">Add lifetime coverage now and never pay the $20/yr maintenance fee. One-time upgrade.</div>
+        </div>
+        <div class="addon-price">+$50</div>
+      </div>
+    </div>
+
+    <!-- GUARANTEE -->
+    <div class="guarantee-box">
+      <div class="guarantee-icon">🛡️</div>
+      <div>
+        <div class="guarantee-title">Delivery Guaranteed — Automated & Timestamped</div>
+        <div class="guarantee-text">
+          Your EA is delivered automatically the moment payment confirms on-chain — no manual steps, no waiting on us. Every delivery is timestamped and logged. Coinbase Commerce and NOWPayments handle the full payment-to-delivery pipeline without us touching a thing.
+        </div>
+      </div>
+    </div>
+
+    <!-- NO REFUND POLICY -->
+    <div class="policy-banner" style="margin-bottom:28px;">
+      <div class="policy-icon">⚠️</div>
+      <div class="policy-text">
+        <strong>No Refund Policy.</strong> All sales are final once your EA download link has been delivered to your email. Because our product is a digital file that is immediately accessible upon delivery, we are unable to offer refunds after the EA has been sent. Please review all product details and live results before purchasing. By completing payment you confirm you have read and agree to this policy.
+      </div>
+    </div>
+
+    <!-- WHAT HAPPENS NEXT -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px 24px;">
+      <div class="addon-title" style="margin-bottom:14px;">What happens after payment</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;font-size:.84rem;">
+          <span style="color:var(--cyan);font-family:var(--mono);font-size:.75rem;width:22px;flex-shrink:0;margin-top:1px;">01</span>
+          <span style="color:var(--muted);">Payment confirmed on-chain — usually under 2 minutes</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;font-size:.84rem;">
+          <span style="color:var(--cyan);font-family:var(--mono);font-size:.75rem;width:22px;flex-shrink:0;margin-top:1px;">02</span>
+          <span style="color:var(--muted);">EA download link and license key sent to your email instantly</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;font-size:.84rem;">
+          <span style="color:var(--cyan);font-family:var(--mono);font-size:.75rem;width:22px;flex-shrink:0;margin-top:1px;">03</span>
+          <span style="color:var(--muted);">Member dashboard access unlocked — track your performance live</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;font-size:.84rem;">
+          <span style="color:var(--cyan);font-family:var(--mono);font-size:.75rem;width:22px;flex-shrink:0;margin-top:1px;">04</span>
+          <span style="color:var(--muted);">Invited to private Discord support channel within 24h</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: PAYMENT PANEL -->
+  <div class="payment-panel">
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+      <div class="order-summary-title">Order Summary</div>
+      <div class="order-line">
+        <span class="label" id="sum-plan-name">EA Purchase</span>
+        <span class="value">$97.00</span>
+      </div>
+      <div class="order-line" id="sum-addon-line" style="display:none;">
+        <span class="label">+ Lifetime Insurance</span>
+        <span class="value" style="color:var(--yellow)">$50.00</span>
+      </div>
+      <div class="order-line" style="display:none;" id="sum-maintenance-note">
+        <span class="label" style="font-size:.78rem;">↳ $20/yr maintenance after 6 mo</span>
+        <span class="value" style="font-size:.78rem;color:var(--muted);">future</span>
+      </div>
+      <hr class="order-divider">
+      <div class="order-total">
+        <span class="label">Total Due Today</span>
+        <span class="value" id="sum-total">$97.00</span>
+      </div>
+    </div>
+
+    <!-- Processor Tabs -->
+    <div class="processor-tabs">
+      <button class="proc-tab active" onclick="switchProcessor('coinbase')">
+        <span class="proc-icon">🔵</span>
+        <span class="proc-label">Coinbase</span>
+      </button>
+      <button class="proc-tab" onclick="switchProcessor('nowpay')">
+        <span class="proc-icon">⚡</span>
+        <span class="proc-label">NOWPayments</span>
+      </button>
+    </div>
+
+    <!-- Payment Body -->
+    <div class="payment-body">
+
+      <!-- COINBASE PANEL -->
+      <div class="proc-panel active" id="panel-coinbase">
+        <div class="coinbase-info">
+          <div class="coinbase-logo">🔵</div>
+          <div class="coinbase-text">
+            <strong>Coinbase Commerce</strong><br>
+            Secure, non-custodial crypto checkout. Accepts BTC, ETH, USDC, LTC, DAI and more. You'll be redirected to complete payment.
+          </div>
+        </div>
+
+        <label class="pay-input-label">Your Email Address</label>
+        <input class="pay-input" type="email" placeholder="you@example.com" id="cb-email">
+
+        <label class="pay-input-label">Full Name</label>
+        <input class="pay-input" type="text" placeholder="Your name" id="cb-name">
+
+        <div class="consent-wrap" onclick="toggleConsent('cb')">
+          <div class="consent-box" id="cb-consent"></div>
+          <div class="consent-text">I have read and agree to the <a>No Refund Policy</a>. I understand my EA will be delivered instantly to my email upon payment confirmation and no refunds will be issued after delivery.</div>
+        </div>
+
+        <button class="pay-btn btn-coinbase" onclick="handleCoinbase()">
+          <span id="cb-spinner" class="spinner"></span>
+          <span id="cb-label">Pay with Coinbase →</span>
+        </button>
+      </div>
+
+      <!-- NOWPAYMENTS PANEL -->
+      <div class="proc-panel" id="panel-nowpay">
+
+        <label class="pay-input-label" style="margin-bottom:10px;">Select Coin</label>
+        <div class="coin-grid">
+          <div class="coin-chip active" onclick="selectCoin(this,'BTC')">
+            <span class="coin-emoji">₿</span>
+            <span class="coin-name">BTC</span>
+          </div>
+          <div class="coin-chip" onclick="selectCoin(this,'ETH')">
+            <span class="coin-emoji">Ξ</span>
+            <span class="coin-name">ETH</span>
+          </div>
+          <div class="coin-chip" onclick="selectCoin(this,'USDT')">
+            <span class="coin-emoji">💵</span>
+            <span class="coin-name">USDT</span>
+          </div>
+          <div class="coin-chip" onclick="selectCoin(this,'BNB')">
+            <span class="coin-emoji">🟡</span>
+            <span class="coin-name">BNB</span>
+          </div>
+          <div class="coin-chip" onclick="selectCoin(this,'SOL')">
+            <span class="coin-emoji">◎</span>
+            <span class="coin-name">SOL</span>
+          </div>
+          <div class="coin-chip" onclick="selectCoin(this,'LTC')">
+            <span class="coin-emoji">Ł</span>
+            <span class="coin-name">LTC</span>
+          </div>
+          <div class="coin-chip" onclick="selectCoin(this,'XRP')">
+            <span class="coin-emoji">✕</span>
+            <span class="coin-name">XRP</span>
+          </div>
+          <div class="coin-chip" onclick="selectCoin(this,'DOGE')">
+            <span class="coin-emoji">🐕</span>
+            <span class="coin-name">DOGE</span>
+          </div>
+        </div>
+        <div class="more-coins">+300 more coins supported · <span onclick="alert('Full coin list available at checkout')">See all</span></div>
+
+        <label class="pay-input-label">Your Email Address</label>
+        <input class="pay-input" type="email" placeholder="you@example.com" id="np-email">
+
+        <label class="pay-input-label">Full Name</label>
+        <input class="pay-input" type="text" placeholder="Your name" id="np-name">
+
+        <div class="consent-wrap" onclick="toggleConsent('np')">
+          <div class="consent-box" id="np-consent"></div>
+          <div class="consent-text">I have read and agree to the <a>No Refund Policy</a>. I understand my EA will be delivered instantly to my email upon payment confirmation and no refunds will be issued after delivery.</div>
+        </div>
+
+        <button class="pay-btn btn-nowpay" onclick="handleNOWPay()">
+          <span id="np-spinner" class="spinner"></span>
+          <span id="np-label">Pay with NOWPayments →</span>
+        </button>
+      </div>
+
+      <!-- Security -->
+      <div class="security-row">
+        <div class="sec-badge"><span class="sec-icon">🔒</span> SSL Encrypted</div>
+        <div class="sec-badge"><span class="sec-icon">⛓</span> On-Chain</div>
+        <div class="sec-badge"><span class="sec-icon">✅</span> Instant Confirm</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title cyan" id="modal-title">Payment Initiated</div>
+    <div class="modal-text" id="modal-text">Your payment is being processed on-chain. This usually takes under 2 minutes. Check your email for confirmation and your EA download link.</div>
+    <div class="modal-detail" id="modal-detail">
+      <div class="row"><span class="k">Plan</span><span class="v" id="md-plan">—</span></div>
+      <div class="row"><span class="k">Amount</span><span class="v" id="md-amount">—</span></div>
+      <div class="row"><span class="k">Processor</span><span class="v" id="md-proc">—</span></div>
+      <div class="row"><span class="k">Email</span><span class="v" id="md-email">—</span></div>
+      <div class="row"><span class="k">Status</span><span class="v" style="color:var(--yellow)">Awaiting confirmation</span></div>
+    </div>
+    <button class="modal-close" onclick="closeModal()">GOT IT</button>
+  </div>
+</div>
+
+<script>
+  let selectedPlan = 'standard';
+  let addonSelected = false;
+  let selectedCoin = 'BTC';
+  let consent = { cb: false, np: false };
+
+  function toggleConsent(id) {
+    consent[id] = !consent[id];
+    const box = document.getElementById(id + '-consent');
+    box.textContent = consent[id] ? '✓' : '';
+    box.classList.toggle('checked', consent[id]);
+  }
+
+  const PRICES = { standard: 97, lifetime: 147 };
+
+  function selectPlan(plan) {
+    selectedPlan = plan;
+    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('plan-' + plan).classList.add('selected');
+
+    // Show addon only for standard plan
+    document.getElementById('addon-section').style.display = plan === 'standard' ? 'block' : 'none';
+    if (plan === 'lifetime') { addonSelected = false; syncAddonUI(); }
+
+    updateSummary();
+  }
+
+  function toggleAddon() {
+    addonSelected = !addonSelected;
+    syncAddonUI();
+    updateSummary();
+  }
+
+  function syncAddonUI() {
+    const card = document.getElementById('addon-ins');
+    const check = document.getElementById('addon-check');
+    if (addonSelected) {
+      card.classList.add('selected');
+      check.textContent = '✓';
+    } else {
+      card.classList.remove('selected');
+      check.textContent = '';
+    }
+  }
+
+  function updateSummary() {
+    const base = PRICES[selectedPlan];
+    const addon = (selectedPlan === 'standard' && addonSelected) ? 50 : 0;
+    const total = base + addon;
+
+    document.getElementById('sum-plan-name').textContent =
+      selectedPlan === 'lifetime' ? 'EA + Lifetime Insurance' : 'EA Purchase';
+    document.getElementById('sum-addon-line').style.display =
+      (selectedPlan === 'standard' && addonSelected) ? 'flex' : 'none';
+    document.getElementById('sum-maintenance-note').style.display =
+      (selectedPlan === 'standard' && !addonSelected) ? 'flex' : 'none';
+    document.getElementById('sum-total').textContent = '$' + total + '.00';
+  }
+
+  function switchProcessor(proc) {
+    document.querySelectorAll('.proc-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.proc-panel').forEach(p => p.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('panel-' + proc).classList.add('active');
+  }
+
+  function selectCoin(el, coin) {
+    document.querySelectorAll('.coin-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    selectedCoin = coin;
+  }
+
+  function getTotal() {
+    const base = PRICES[selectedPlan];
+    const addon = (selectedPlan === 'standard' && addonSelected) ? 50 : 0;
+    return base + addon;
+  }
+
+  function getPlanLabel() {
+    if (selectedPlan === 'lifetime') return 'EA + Lifetime Insurance';
+    if (addonSelected) return 'EA Purchase + Lifetime Insurance';
+    return 'EA Purchase';
+  }
+
+  function handleCoinbase() {
+    const email = document.getElementById('cb-email').value.trim();
+    const name  = document.getElementById('cb-name').value.trim();
+    if (!email || !email.includes('@')) { document.getElementById('cb-email').style.borderColor='var(--red)'; return; }
+    if (!name) { document.getElementById('cb-name').style.borderColor='var(--red)'; return; }
+    if (!consent.cb) {
+      document.getElementById('cb-consent').style.borderColor = 'var(--red)';
+      alert('Please agree to the No Refund Policy before continuing.');
+      return;
+    }
+
+    // Show loading
+    document.getElementById('cb-spinner').style.display = 'block';
+    document.getElementById('cb-label').textContent = 'Connecting…';
+
+    // Simulate API call — replace with real Coinbase Commerce charge creation
+    setTimeout(() => {
+      document.getElementById('cb-spinner').style.display = 'none';
+      document.getElementById('cb-label').textContent = 'Pay with Coinbase →';
+      showModal('Coinbase Commerce', email);
+      // In production: window.location.href = chargeData.hosted_url;
+    }, 1800);
+  }
+
+  function handleNOWPay() {
+    const email = document.getElementById('np-email').value.trim();
+    const name  = document.getElementById('np-name').value.trim();
+    if (!email || !email.includes('@')) { document.getElementById('np-email').style.borderColor='var(--red)'; return; }
+    if (!name) { document.getElementById('np-name').style.borderColor='var(--red)'; return; }
+    if (!consent.np) {
+      document.getElementById('np-consent').style.borderColor = 'var(--red)';
+      alert('Please agree to the No Refund Policy before continuing.');
+      return;
+    }
+
+    document.getElementById('np-spinner').style.display = 'block';
+    document.getElementById('np-label').textContent = 'Connecting…';
+
+    setTimeout(() => {
+      document.getElementById('np-spinner').style.display = 'none';
+      document.getElementById('np-label').textContent = 'Pay with NOWPayments →';
+      showModal('NOWPayments · ' + selectedCoin, email);
+      // In production: window.location.href = paymentData.invoice_url;
+    }, 1800);
+  }
+
+  function showModal(processor, email) {
+    document.getElementById('md-plan').textContent   = getPlanLabel();
+    document.getElementById('md-amount').textContent = '$' + getTotal() + '.00';
+    document.getElementById('md-proc').textContent   = processor;
+    document.getElementById('md-email').textContent  = email;
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+
+  // Init
+  selectPlan('lifetime');
+</script>
+</body>
+</html>
