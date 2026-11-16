@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal – Top Dollar Expert Advisors</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #0a0c0f;
+  --surface: #111418;
+  --card:    #161b22;
+  --border:  #1e2530;
+  --cyan:    #00d4ff;
+  --green:   #00e676;
+  --yellow:  #ffc107;
+  --red:     #ff4757;
+  --purple:  #a855f7;
+  --text:    #e8ecf0;
+  --muted:   #6b7a90;
+  --display: 'Bebas Neue', sans-serif;
+  --body:    'Inter', sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+}
+
+body { background: var(--bg); color: var(--text); font-family: var(--body); min-height: 100vh; }
+
+/* SCREENS */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* LOGIN */
+#login-screen { align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.login-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,255,.07) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 80% 80%, rgba(168,85,247,.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.login-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  max-width: 960px; width: 90%;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
+  position: relative; z-index: 1;
+  box-shadow: 0 40px 80px rgba(0,0,0,.5);
+}
+.login-brand {
+  background: linear-gradient(135deg, #0d1117 0%, #111827 100%);
+  padding: 56px 48px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  border-right: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.login-brand::before {
+  content: 'TOP $';
+  position: absolute; bottom: -20px; right: -20px;
+  font-family: var(--display); font-size: 9rem;
+  color: rgba(0,212,255,.04); line-height: 1;
+  pointer-events: none; user-select: none;
+}
+.brand-logo { font-family: var(--display); font-size: 2rem; letter-spacing: 1px; }
+.brand-logo span { color: var(--cyan); }
+.brand-tagline { font-size: .82rem; color: var(--muted); margin-top: 6px; }
+.brand-stats { display: flex; flex-direction: column; gap: 20px; }
+.bsi-val { font-family: var(--display); font-size: 2rem; color: var(--green); letter-spacing: 1px; }
+.bsi-val.c { color: var(--cyan); } .bsi-val.y { color: var(--yellow); }
+.bsi-lbl { font-family: var(--mono); font-size: .68rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+.brand-footer { font-size: .75rem; color: var(--muted); }
+
+.login-form-panel { padding: 56px 48px; }
+.login-tabs {
+  display: flex; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 4px; margin-bottom: 32px;
+}
+.login-tab {
+  flex: 1; text-align: center; padding: 9px; border-radius: 7px;
+  font-size: .82rem; font-weight: 600; cursor: pointer; color: var(--muted);
+  transition: all .2s; border: none; background: transparent; font-family: var(--body);
+}
+.login-tab.active { background: var(--card); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+
+.role-select { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 28px; }
+.role-btn {
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: 10px; padding: 16px 12px;
+  cursor: pointer; transition: all .2s; text-align: center; user-select: none;
+}
+.role-btn:hover { border-color: rgba(0,212,255,.3); }
+.role-btn.active.member  { border-color: var(--cyan);   background: rgba(0,212,255,.05); }
+.role-btn.active.affiliate { border-color: var(--purple); background: rgba(168,85,247,.05); }
+.role-icon-wrap { width: 32px; height: 32px; margin: 0 auto 8px; }
+.role-icon-wrap svg { width: 100%; height: 100%; }
+.role-label { font-size: .82rem; font-weight: 600; }
+.role-sub { font-size: .68rem; color: var(--muted); margin-top: 3px; }
+
+.form-group { margin-bottom: 16px; }
+.form-label {
+  font-family: var(--mono); font-size: .68rem; color: var(--muted);
+  letter-spacing: 1.5px; text-transform: uppercase; display: block; margin-bottom: 7px;
+}
+.form-input {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; color: var(--text);
+  font-family: var(--body); font-size: .9rem; outline: none; transition: border-color .2s;
+}
+.form-input:focus { border-color: var(--cyan); }
+.form-input::placeholder { color: var(--muted); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.submit-btn {
+  width: 100%; padding: 14px; border-radius: 9px; border: none;
+  font-family: var(--display); font-size: 1.1rem; letter-spacing: 1.5px;
+  cursor: pointer; transition: opacity .2s; margin-top: 6px;
+}
+.submit-btn.member-btn    { background: var(--cyan);   color: #000; }
+.submit-btn.affiliate-btn { background: var(--purple); color: #fff; }
+.submit-btn:hover { opacity: .88; }
+.form-footer { font-size: .75rem; color: var(--muted); text-align: center; margin-top: 14px; }
+.form-footer a { color: var(--cyan); cursor: pointer; }
+
+/* SHARED DASHBOARD LAYOUT */
+#member-screen, #affiliate-screen { flex-direction: row; }
+
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 22px 20px 18px; border-bottom: 1px solid var(--border);
+  font-family: var(--display); font-size: 1.3rem; letter-spacing: 1px;
+}
+.sidebar-logo span.c { color: var(--cyan); }
+.sidebar-logo span.p { color: var(--purple); }
+.sidebar-user {
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: .8rem; flex-shrink: 0;
+}
+.user-avatar.m { background: rgba(0,212,255,.12); color: var(--cyan); }
+.user-avatar.a { background: rgba(168,85,247,.12); color: var(--purple); }
+.user-name { font-size: .85rem; font-weight: 600; }
+.user-role { font-family: var(--mono); font-size: .6rem; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+.user-role.m { color: var(--cyan); } .user-role.a { color: var(--purple); }
+
+.sidebar-nav { flex: 1; padding: 14px 10px; }
+.nav-section-label {
+  font-family: var(--mono); font-size: .58rem; color: var(--muted);
+  letter-spacing: 2px; text-transform: uppercase; padding: 0 10px; margin: 16px 0 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 7px; cursor: pointer;
+  color: var(--muted); font-size: .84rem; font-weight: 500;
+  transition: all .2s; margin-bottom: 1px; user-select: none;
+}
+.nav-item:hover { background: var(--card); color: var(--text); }
+.nav-item.active.mn { background: rgba(0,212,255,.08);   color: var(--cyan); }
+.nav-item.active.an { background: rgba(168,85,247,.08);  color: var(--purple); }
+.nav-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: .7; }
+.nav-item.active .nav-icon { opacity: 1; }
+.nav-badge {
+  margin-left: auto; background: var(--green); color: #000;
+  font-size: .58rem; font-weight: 700; padding: 2px 6px;
+  border-radius: 8px; font-family: var(--mono); letter-spacing: .5px;
+}
+
+.sidebar-bottom { padding: 14px; border-top: 1px solid var(--border); }
+.logout-btn {
+  width: 100%; background: transparent; border: 1px solid var(--border);
+  border-radius: 7px; padding: 9px; color: var(--muted);
+  font-family: var(--body); font-size: .82rem; cursor: pointer;
+  transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* MAIN CONTENT */
+.dash-main { flex: 1; overflow-y: auto; padding: 36px 40px; }
+.dash-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+.dash-greeting { font-family: var(--display); font-size: 1.8rem; letter-spacing: 1px; }
+.dash-greeting span.c { color: var(--cyan); }
+.dash-greeting span.p { color: var(--purple); }
+.topbar-tag {
+  font-family: var(--mono); font-size: .68rem; letter-spacing: 1.5px;
+  padding: 5px 12px; border-radius: 20px;
+}
+.tag-m { background: rgba(0,212,255,.1);  border: 1px solid rgba(0,212,255,.2);  color: var(--cyan); }
+.tag-a { background: rgba(168,85,247,.1); border: 1px solid rgba(168,85,247,.2); color: var(--purple); }
+
+/* STAT CARDS */
+.stat-grid { display: grid; gap: 14px; margin-bottom: 24px; }
+.sg4 { grid-template-columns: repeat(4,1fr); }
+.sg3 { grid-template-columns: repeat(3,1fr); }
+.stat-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; position: relative; overflow: hidden;
+}
+.stat-card::after { content: ''; position: absolute; bottom:0;left:0;right:0; height:2px; }
+.stat-card.c::after{background:var(--cyan);}  .stat-card.g::after{background:var(--green);}
+.stat-card.y::after{background:var(--yellow);}.stat-card.r::after{background:var(--red);}
+.stat-card.p::after{background:var(--purple);}
+.sc-label { font-family:var(--mono); font-size:.63rem; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+.sc-val { font-family:var(--display); font-size:1.9rem; letter-spacing:1px; line-height:1; margin-bottom:4px; }
+.sc-val.c{color:var(--cyan);} .sc-val.g{color:var(--green);} .sc-val.y{color:var(--yellow);} .sc-val.r{color:var(--red);} .sc-val.p{color:var(--purple);}
+.sc-sub { font-size:.73rem; color:var(--muted); }
+
+/* CONTENT CARDS */
+.content-card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:22px; }
+.cc-header { padding:16px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.cc-title { font-weight:600; font-size:.9rem; }
+.cc-action { font-family:var(--mono); font-size:.68rem; cursor:pointer; letter-spacing:1px; }
+.cc-action.c{color:var(--cyan);} .cc-action.p{color:var(--purple);}
+.cc-body { padding:20px 22px; }
+
+/* TABLE */
+.data-table { width:100%; border-collapse:collapse; }
+.data-table th { font-family:var(--mono); font-size:.63rem; color:var(--muted); letter-spacing:1.5px; text-transform:uppercase; text-align:left; padding:0 0 12px; border-bottom:1px solid var(--border); }
+.data-table td { padding:11px 0; font-size:.84rem; border-bottom:1px solid rgba(30,37,48,.5); }
+.data-table tr:last-child td { border-bottom:none; }
+.pill { display:inline-block; font-family:var(--mono); font-size:.63rem; letter-spacing:1px; padding:3px 8px; border-radius:4px; }
+.pill.win  { background:rgba(0,230,118,.1);  color:var(--green);  }
+.pill.loss { background:rgba(255,71,87,.1);   color:var(--red);    }
+.pill.paid { background:rgba(0,230,118,.1);  color:var(--green);  }
+.pill.pend { background:rgba(255,193,7,.1);  color:var(--yellow); }
+.pill.buy  { background:rgba(0,230,118,.1);  color:var(--green);  }
+.pill.sell { background:rgba(255,71,87,.1);   color:var(--red);    }
+
+/* EQUITY CHART */
+.mini-chart { width:100%; height:110px; display:block; }
+
+/* REF LINK */
+.ref-link-box {
+  background:var(--surface); border:1px solid var(--border); border-radius:9px;
+  padding:13px 16px; display:flex; align-items:center; gap:12px; margin-bottom:10px;
+}
+.ref-link-val { flex:1; font-family:var(--mono); font-size:.78rem; color:var(--purple); word-break:break-all; }
+.copy-btn {
+  background:rgba(168,85,247,.1); border:1px solid rgba(168,85,247,.25);
+  color:var(--purple); padding:7px 14px; border-radius:7px;
+  font-size:.78rem; font-family:var(--body); cursor:pointer; white-space:nowrap;
+  transition:all .2s; flex-shrink:0;
+}
+.copy-btn:hover { background:rgba(168,85,247,.2); }
+
+/* PAYOUT */
+.payout-box { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:22px; }
+.payout-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.payout-label { font-size:.82rem; color:var(--muted); margin-bottom:4px; }
+.payout-amount { font-family:var(--display); font-size:2.1rem; color:var(--purple); }
+.payout-input {
+  width:100%; background:var(--card); border:1px solid var(--border);
+  border-radius:8px; padding:11px 14px; color:var(--text);
+  font-family:var(--mono); font-size:.85rem; outline:none; margin-bottom:10px;
+  transition:border-color .2s;
+}
+.payout-input:focus { border-color:var(--purple); }
+.payout-input::placeholder { color:var(--muted); }
+.payout-btn {
+  width:100%; background:var(--purple); color:#fff; border:none; border-radius:8px;
+  padding:13px; font-family:var(--display); font-size:1.05rem; letter-spacing:1.5px;
+  cursor:pointer; transition:opacity .2s;
+}
+.payout-btn:hover { opacity:.88; }
+
+/* COMMISSION ROW */
+.comm-row {
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+  padding:13px 16px; display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:8px; font-size:.84rem;
+}
+.comm-label { color:var(--muted); }
+.comm-val { font-family:var(--mono); font-weight:600; }
+.comm-val.p{color:var(--purple);} .comm-val.g{color:var(--green);} .comm-val.y{color:var(--yellow);}
+
+/* AFFILIATE RULES */
+.rules-section { margin-bottom:22px; }
+.rules-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.rule-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px;
+}
+.rule-num {
+  font-family:var(--mono); font-size:.65rem; color:var(--purple);
+  letter-spacing:2px; margin-bottom:8px;
+}
+.rule-title { font-weight:600; font-size:.88rem; margin-bottom:5px; }
+.rule-text { font-size:.78rem; color:var(--muted); line-height:1.6; }
+.rules-alert {
+  background:rgba(168,85,247,.05); border:1px solid rgba(168,85,247,.2);
+  border-radius:10px; padding:14px 18px; margin-bottom:16px;
+  font-size:.82rem; color:var(--muted); line-height:1.6;
+}
+.rules-alert strong { color:var(--purple); }
+
+/* TWO COL */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-bottom:22px; }
+</style>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<!-- SVG ICON SPRITE -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="ic-chart"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></symbol>
+  <symbol id="ic-perf"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></symbol>
+  <symbol id="ic-history"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="ic-robot"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><line x1="12" y1="7" x2="12" y2="11"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/></symbol>
+  <symbol id="ic-store"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></symbol>
+  <symbol id="ic-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></symbol>
+  <symbol id="ic-support"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></symbol>
+  <symbol id="ic-money"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></symbol>
+  <symbol id="ic-link"     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="ic-convert"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></symbol>
+  <symbol id="ic-payout"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></symbol>
+  <symbol id="ic-kit"      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></symbol>
+  <symbol id="ic-analytics"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></symbol>
+  <symbol id="ic-rules"    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
+  <symbol id="ic-logout"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
+  <symbol id="ic-member"   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="ic-affiliate"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></symbol>
+</svg>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div class="screen active" id="login-screen">
+  <div class="login-bg"></div>
+  <div class="login-grid">
+    <div class="login-brand">
+      <div>
+        <div class="brand-logo">Top Dollar <span>EA</span></div>
+        <div class="brand-tagline">Algorithmic trading. Verified results.</div>
+      </div>
+      <div class="brand-stats">
+        <div><div class="bsi-val">+18.4%</div><div class="bsi-lbl">Month-to-date return</div></div>
+        <div><div class="bsi-val c">68.2%</div><div class="bsi-lbl">Win rate (30 days)</div></div>
+        <div><div class="bsi-val y">2.91</div><div class="bsi-lbl">Profit factor</div></div>
+      </div>
+      <div class="brand-footer">All results verified via third-party tracking.</div>
+    </div>
+
+    <div class="login-form-panel">
+      <div class="login-tabs">
+        <button class="login-tab active" onclick="switchTab('login')">Sign In</button>
+        <button class="login-tab" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <div class="role-select">
+        <div class="role-btn member active" id="role-member" onclick="selectRole('member')">
+          <div class="role-icon-wrap"><svg><use href="#ic-member"/></svg></div>
+          <div class="role-label">Member</div>
+          <div class="role-sub">Trade &amp; track</div>
+        </div>
+        <div class="role-btn affiliate" id="role-affiliate" onclick="selectRole('affiliate')">
+          <div class="role-icon-wrap"><svg><use href="#ic-affiliate"/></svg></div>
+          <div class="role-label">Affiliate</div>
+          <div class="role-sub">Refer &amp; earn 80%</div>
+        </div>
+      </div>
+
+      <div id="form-login">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="you@example.com" id="login-email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="••••••••">
+        </div>
+        <button class="submit-btn member-btn" id="login-submit" onclick="handleLogin()">SIGN IN</button>
+        <div class="form-footer">Forgot password? <a>Reset here</a></div>
+      </div>
+
+      <div id="form-register" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" placeholder="First"></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" placeholder="Last"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" placeholder="you@example.com"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Choose a strong password"></div>
+        <div class="form-group" id="reg-wallet" style="display:none">
+          <label class="form-label">Crypto Wallet Address (payouts)</label>
+          <input class="form-input" type="text" placeholder="BTC / ETH / USDT address">
+        </div>
+        <button class="submit-btn member-btn" id="register-submit" onclick="handleRegister()">CREATE ACCOUNT</button>
+        <div class="form-footer">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MEMBER DASHBOARD ══════════════ -->
+<div class="screen" id="member-screen">
+  <div class="sidebar">
+    <div class="sidebar-logo">Top Dollar <span class="c">EA</span></div>
+    <div class="sidebar-user">
+      <div class="user-avatar m" id="m-av">JD</div>
+      <div><div class="user-name" id="m-name">John Doe</div><div class="user-role m">Member</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active mn" onclick="mNav(this)"><svg class="nav-icon"><use href="#ic-chart"/></svg> Dashboard</div>
+      <div class="nav-item" onclick="mNav(this)"><svg class="nav-icon"><use href="#ic-perf"/></svg> Performance</div>
+      <div class="nav-item" onclick="mNav(this)"><svg class="nav-icon"><use href="#ic-history"/></svg> Trade History <span class="nav-badge">NEW</span></div>
+      <div class="nav-section-label">My EAs</div>
+      <div class="nav-item" onclick="mNav(this)"><svg class="nav-icon"><use href="#ic-robot"/></svg> My EAs</div>
+      <div class="nav-item" onclick="mNav(this)"><svg class="nav-icon"><use href="#ic-store"/></svg> EA Store</div>
+      <div class="nav-section-label">Account</div>
+      <div class="nav-item" onclick="mNav(this)"><svg class="nav-icon"><use href="#ic-settings"/></svg> Settings</div>
+      <div class="nav-item" onclick="mNav(this)"><svg class="nav-icon"><use href="#ic-support"/></svg> Support</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="logout-btn" onclick="logout()"><svg style="width:14px;height:14px"><use href="#ic-logout"/></svg> Sign Out</button>
+    </div>
+  </div>
+
+  <div class="dash-main">
+    <div class="dash-topbar">
+      <div class="dash-greeting">Welcome back, <span class="c" id="m-greet">John</span></div>
+      <span class="topbar-tag tag-m">MEMBER</span>
+    </div>
+
+    <div class="stat-grid sg4">
+      <div class="stat-card c"><div class="sc-label">MTD Return</div><div class="sc-val c">+12.8%</div><div class="sc-sub">+1.4% vs last month</div></div>
+      <div class="stat-card g"><div class="sc-label">Win Rate</div><div class="sc-val g">71.4%</div><div class="sc-sub">124 / 174 trades</div></div>
+      <div class="stat-card y"><div class="sc-label">Profit Factor</div><div class="sc-val y">3.14</div><div class="sc-sub">Target &gt;2.0</div></div>
+      <div class="stat-card r"><div class="sc-label">Max Drawdown</div><div class="sc-val r">-5.2%</div><div class="sc-sub">Within threshold</div></div>
+    </div>
+
+    <div class="two-col">
+      <div class="content-card" style="margin-bottom:0">
+        <div class="cc-header"><span class="cc-title">Equity Curve</span><span class="cc-action c">30D</span></div>
+        <div class="cc-body">
+          <svg class="mini-chart" viewBox="0 0 500 110" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00d4ff" stop-opacity=".2"/><stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,95 L50,85 L100,75 L140,70 L180,62 L210,65 L250,52 L290,42 L330,32 L370,22 L420,12 L470,6 L500,3 L500,110 L0,110Z" fill="url(#mg)"/>
+            <path d="M0,95 L50,85 L100,75 L140,70 L180,62 L210,65 L250,52 L290,42 L330,32 L370,22 L420,12 L470,6 L500,3" fill="none" stroke="#00d4ff" stroke-width="1.8"/>
+          </svg>
+        </div>
+      </div>
+      <div class="content-card" style="margin-bottom:0">
+        <div class="cc-header"><span class="cc-title">My EAs</span><span class="cc-action c">Browse Store</span></div>
+        <div class="cc-body">
+          <table class="data-table">
+            <thead><tr><th>EA</th><th>Pair</th><th>Status</th><th>Return</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">EA-001</td><td style="color:var(--muted)">EUR/USD</td><td><span class="pill win">ACTIVE</span></td><td style="color:var(--green);font-family:var(--mono)">+9.4%</td></tr>
+              <tr><td style="font-weight:600">EA-002</td><td style="color:var(--muted)">BTC/USD</td><td><span class="pill win">ACTIVE</span></td><td style="color:var(--green);font-family:var(--mono)">+3.4%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="cc-header"><span class="cc-title">Recent Trades</span><span class="cc-action c">Full History</span></div>
+      <div class="cc-body">
+        <table class="data-table">
+          <thead><tr><th>Time</th><th>Pair</th><th>Direction</th><th>Pips</th><th>EA</th><th>Result</th></tr></thead>
+          <tbody id="m-trades"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="content-card" style="margin-bottom:0">
+        <div class="cc-header"><span class="cc-title">License &amp; Coverage</span></div>
+        <div class="cc-body">
+          <div class="comm-row"><span class="comm-label">Plan</span><span class="comm-val c">EA + Lifetime Insurance</span></div>
+          <div class="comm-row"><span class="comm-label">Purchase Date</span><span class="comm-val">Jun 1, 2026</span></div>
+          <div class="comm-row"><span class="comm-label">Support</span><span class="comm-val g">Lifetime</span></div>
+          <div class="comm-row"><span class="comm-label">Upgrades</span><span class="comm-val g">Automatic</span></div>
+        </div>
+      </div>
+      <div class="content-card" style="margin-bottom:0">
+        <div class="cc-header"><span class="cc-title">Quick Links</span></div>
+        <div class="cc-body" style="display:flex;flex-direction:column;gap:8px">
+          <div class="comm-row" style="cursor:pointer"><span>Discord Community</span><span style="color:var(--cyan);font-size:.78rem">Join</span></div>
+          <div class="comm-row" style="cursor:pointer"><span>Download My EAs</span><span style="color:var(--cyan);font-size:.78rem">Download</span></div>
+          <div class="comm-row" style="cursor:pointer"><span>Live Results</span><span style="color:var(--cyan);font-size:.78rem">View</span></div>
+          <div class="comm-row" style="cursor:pointer"><span>Become an Affiliate</span><span style="color:var(--purple);font-size:.78rem">Earn 80%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ AFFILIATE DASHBOARD ══════════════ -->
+<div class="screen" id="affiliate-screen">
+  <div class="sidebar">
+    <div class="sidebar-logo">Top Dollar <span class="p">EA</span></div>
+    <div class="sidebar-user">
+      <div class="user-avatar a" id="a-av">AF</div>
+      <div><div class="user-name" id="a-name">Alex Finance</div><div class="user-role a">Affiliate</div></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Earnings</div>
+      <div class="nav-item active an" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-money"/></svg> Dashboard</div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-link"/></svg> Referral Links</div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-convert"/></svg> Conversions <span class="nav-badge">3</span></div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-payout"/></svg> Payouts</div>
+      <div class="nav-section-label">Grow</div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-kit"/></svg> Marketing Kit</div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-analytics"/></svg> Analytics</div>
+      <div class="nav-section-label">Program</div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-rules"/></svg> Program Rules</div>
+      <div class="nav-section-label">Account</div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-settings"/></svg> Settings</div>
+      <div class="nav-item" onclick="aNav(this)"><svg class="nav-icon"><use href="#ic-support"/></svg> Support</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="logout-btn" onclick="logout()"><svg style="width:14px;height:14px"><use href="#ic-logout"/></svg> Sign Out</button>
+    </div>
+  </div>
+
+  <div class="dash-main">
+    <div class="dash-topbar">
+      <div class="dash-greeting">Affiliate <span class="p">Dashboard</span></div>
+      <span class="topbar-tag tag-a">80% COMMISSION</span>
+    </div>
+
+    <div class="stat-grid sg4">
+      <div class="stat-card p"><div class="sc-label">Total Earned</div><div class="sc-val p">$622.40</div><div class="sc-sub">All time</div></div>
+      <div class="stat-card g"><div class="sc-label">Available</div><div class="sc-val g">$233.60</div><div class="sc-sub">No minimum — pay anytime</div></div>
+      <div class="stat-card c"><div class="sc-label">Total Referrals</div><div class="sc-val c">11</div><div class="sc-sub">8 converted</div></div>
+      <div class="stat-card y"><div class="sc-label">Conversion Rate</div><div class="sc-val y">72.7%</div><div class="sc-sub">Above average</div></div>
+    </div>
+
+    <!-- AFFILIATE RULES SECTION -->
+    <div class="content-card">
+      <div class="cc-header"><span class="cc-title">Program Rules</span><span class="cc-action p">Updated Jun 2026</span></div>
+      <div class="cc-body">
+        <div class="rules-alert">
+          <strong>Read before promoting.</strong> Violating these rules results in immediate account suspension and forfeiture of pending earnings. All conversions are tracked on-chain and audited monthly.
+        </div>
+        <div class="rules-grid">
+          <div class="rule-card">
+            <div class="rule-num">RULE 01</div>
+            <div class="rule-title">Commission Rate</div>
+            <div class="rule-text">You earn 80% of every sale made through your referral link. Top Dollar EA retains 20%. This applies to all products — EA Purchase ($97), EA + Lifetime Insurance ($147), and Annual Maintenance ($20).</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-num">RULE 02</div>
+            <div class="rule-title">Payout Policy</div>
+            <div class="rule-text">Payouts are processed in crypto only (BTC, ETH, USDT or equivalent). There is no minimum withdrawal threshold — you may request a payout at any time once a sale confirms on-chain.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-num">RULE 03</div>
+            <div class="rule-title">Honest Promotion</div>
+            <div class="rule-text">You may not make earnings guarantees, fabricate performance claims, or misrepresent the product. All promotional content must align with verified live results published on the Top Dollar EA website.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-num">RULE 04</div>
+            <div class="rule-title">No Self-Referrals</div>
+            <div class="rule-text">Purchasing through your own referral link to earn commission is strictly prohibited. Any detected self-referral will result in commission reversal and account review.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-num">RULE 05</div>
+            <div class="rule-title">Cookie Duration</div>
+            <div class="rule-text">Referral cookies last 30 days. If a visitor clicks your link and purchases within 30 days — even if they return directly — the sale is attributed to you.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-num">RULE 06</div>
+            <div class="rule-title">Refund &amp; Chargeback Impact</div>
+            <div class="rule-text">In the event a customer receives a refund (only possible before EA delivery), any commission paid on that sale will be deducted from your next payout. Post-delivery sales are final and commission is locked.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-num">RULE 07</div>
+            <div class="rule-title">Prohibited Channels</div>
+            <div class="rule-text">Spam, unsolicited messages, misleading paid ads, or brand-name bidding (using "Top Dollar EA" in ad keywords) are not permitted. Violation results in immediate termination.</div>
+          </div>
+          <div class="rule-card">
+            <div class="rule-num">RULE 08</div>
+            <div class="rule-title">Account Termination</div>
+            <div class="rule-text">Top Dollar EA reserves the right to terminate any affiliate account at any time for rule violations. Earned and confirmed commissions will still be paid out. Pending commissions under review may be withheld.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="content-card" style="margin-bottom:0">
+        <div class="cc-header"><span class="cc-title">Commission Breakdown</span></div>
+        <div class="cc-body">
+          <div class="comm-row"><span class="comm-label">EA Purchase ($97)</span><span class="comm-val p">You earn $77.60 <span style="color:var(--muted);font-size:.72rem">(80%)</span></span></div>
+          <div class="comm-row"><span class="comm-label">EA + Lifetime ($147)</span><span class="comm-val p">You earn $117.60 <span style="color:var(--muted);font-size:.72rem">(80%)</span></span></div>
+          <div class="comm-row"><span class="comm-label">Annual Maintenance ($20)</span><span class="comm-val p">You earn $16.00 <span style="color:var(--muted);font-size:.72rem">(80%)</span></span></div>
+          <div class="comm-row" style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px"><span class="comm-label">Top Dollar keeps</span><span class="comm-val y">20% per sale</span></div>
+        </div>
+      </div>
+
+      <div class="payout-box" style="margin-bottom:0">
+        <div class="payout-row">
+          <div><div class="payout-label">Available Balance</div><div class="payout-amount">$233.60</div></div>
+          <div style="text-align:right"><div class="payout-label">Minimum</div><div style="font-size:.78rem;color:var(--green);margin-top:4px">None — pay anytime</div></div>
+        </div>
+        <label class="form-label" style="margin-bottom:7px;display:block">Wallet Address</label>
+        <input class="payout-input" type="text" placeholder="BTC / ETH / USDT address">
+        <label class="form-label" style="margin:10px 0 7px;display:block">Amount</label>
+        <input class="payout-input" type="number" placeholder="233.60">
+        <button class="payout-btn">REQUEST PAYOUT</button>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="cc-header"><span class="cc-title">Your Referral Link</span><span class="cc-action p">Generate New</span></div>
+      <div class="cc-body">
+        <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Default Link</div>
+        <div class="ref-link-box">
+          <div class="ref-link-val" id="ref-link">https://topdollarea.com/ref/AF-X9K2M</div>
+          <button class="copy-btn" onclick="copyRef()">Copy Link</button>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted)">Every purchase through this link earns you 80% automatically. 30-day cookie window. Tracked in real time.</div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="cc-header"><span class="cc-title">Recent Conversions</span><span class="cc-action p">Full Report</span></div>
+      <div class="cc-body">
+        <table class="data-table">
+          <thead><tr><th>Date</th><th>Customer</th><th>Plan</th><th>Sale</th><th>Your Cut (80%)</th><th>Status</th></tr></thead>
+          <tbody id="a-conv"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="cc-header"><span class="cc-title">Payout History</span></div>
+      <div class="cc-body">
+        <table class="data-table">
+          <thead><tr><th>Date</th><th>Amount</th><th>Wallet</th><th>Tx Hash</th><th>Status</th></tr></thead>
+          <tbody id="a-pay"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let role = 'member';
+
+function selectRole(r) {
+  role = r;
+  ['member','affiliate'].forEach(x => document.getElementById('role-'+x).classList.toggle('active', x===r));
+  const isAff = r === 'affiliate';
+  document.getElementById('login-submit').className   = 'submit-btn ' + (isAff ? 'affiliate-btn' : 'member-btn');
+  document.getElementById('register-submit').className = 'submit-btn ' + (isAff ? 'affiliate-btn' : 'member-btn');
+  document.getElementById('reg-wallet').style.display = isAff ? 'block' : 'none';
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.login-tab').forEach((t,i) => t.classList.toggle('active', (i===0)===(tab==='login')));
+  document.getElementById('form-login').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
+}
+
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) return;
+  go(role, email.split('@')[0]);
+}
+function handleRegister() { go(role, 'New User'); }
+
+function go(r, name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if (r === 'member') {
+    document.getElementById('member-screen').classList.add('active');
+    document.getElementById('m-av').textContent    = name.slice(0,2).toUpperCase();
+    document.getElementById('m-name').textContent  = name;
+    document.getElementById('m-greet').textContent = name.split(' ')[0];
+  } else {
+    document.getElementById('affiliate-screen').classList.add('active');
+    document.getElementById('a-av').textContent   = name.slice(0,2).toUpperCase();
+    document.getElementById('a-name').textContent = name;
+  }
+}
+
+function logout() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('login-screen').classList.add('active');
+}
+
+function mNav(el) {
+  document.querySelectorAll('#member-screen .nav-item').forEach(n => n.classList.remove('active','mn'));
+  el.classList.add('active','mn');
+}
+function aNav(el) {
+  document.querySelectorAll('#affiliate-screen .nav-item').forEach(n => n.classList.remove('active','an'));
+  el.classList.add('active','an');
+}
+
+function copyRef() {
+  navigator.clipboard.writeText(document.getElementById('ref-link').textContent).catch(()=>{});
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'Copied';
+  setTimeout(() => btn.textContent = 'Copy Link', 2000);
+}
+
+// Member trades
+const TRADES = [
+  {time:'13:15',pair:'EUR/JPY',dir:'BUY', pips:+33.9,ea:'EA-001',res:'win'},
+  {time:'12:03',pair:'GBP/USD',dir:'BUY', pips:+11.5,ea:'EA-002',res:'win'},
+  {time:'11:20',pair:'USD/JPY',dir:'SELL',pips:+27.8,ea:'EA-001',res:'win'},
+  {time:'10:47',pair:'EUR/USD',dir:'BUY', pips:+15.1,ea:'EA-002',res:'win'},
+  {time:'10:12',pair:'AUD/USD',dir:'SELL',pips:-8.3, ea:'EA-001',res:'loss'},
+  {time:'09:18',pair:'EUR/GBP',dir:'BUY', pips:+22.7,ea:'EA-001',res:'win'},
+];
+document.getElementById('m-trades').innerHTML = TRADES.map(t=>`
+  <tr>
+    <td style="color:var(--muted);font-family:var(--mono);font-size:.76rem">${t.time}</td>
+    <td style="font-weight:600">${t.pair}</td>
+    <td><span class="pill ${t.dir==='BUY'?'buy':'sell'}">${t.dir}</span></td>
+    <td style="font-family:var(--mono);color:${t.pips>=0?'var(--green)':'var(--red)'}">${t.pips>=0?'+':''}${t.pips.toFixed(1)}</td>
+    <td style="color:var(--muted)">${t.ea}</td>
+    <td><span class="pill ${t.res}">${t.res.toUpperCase()}</span></td>
+  </tr>`).join('');
+
+// Affiliate conversions
+const CONV = [
+  {date:'Jun 15',cust:'R***@gmail',   plan:'EA + Lifetime', sale:'$147',cut:'$117.60',st:'paid'},
+  {date:'Jun 14',cust:'m***@yahoo',   plan:'EA Purchase',   sale:'$97', cut:'$77.60', st:'paid'},
+  {date:'Jun 12',cust:'t***@outlook', plan:'EA + Lifetime', sale:'$147',cut:'$117.60',st:'paid'},
+  {date:'Jun 10',cust:'s***@gmail',   plan:'EA Purchase',   sale:'$97', cut:'$77.60', st:'pend'},
+  {date:'Jun 08',cust:'j***@gmail',   plan:'EA + Lifetime', sale:'$147',cut:'$117.60',st:'paid'},
+];
+document.getElementById('a-conv').innerHTML = CONV.map(c=>`
+  <tr>
+    <td style="color:var(--muted);font-size:.82rem">${c.date}</td>
+    <td style="font-family:var(--mono);font-size:.76rem;color:var(--muted)">${c.cust}</td>
+    <td>${c.plan}</td>
+    <td style="font-family:var(--mono);font-weight:600">${c.sale}</td>
+    <td style="font-family:var(--mono);color:var(--purple);font-weight:600">${c.cut}</td>
+    <td><span class="pill ${c.st}">${c.st.toUpperCase()}</span></td>
+  </tr>`).join('');
+
+// Payout history
+const PAYS = [
+  {date:'Jun 10',amt:'$233.60',wallet:'bc1q...x4k2',tx:'0xa1b2...f3c4',st:'paid'},
+  {date:'May 28',amt:'$155.20',wallet:'bc1q...x4k2',tx:'0x9d3e...a1b2',st:'paid'},
+];
+document.getElementById('a-pay').innerHTML = PAYS.map(p=>`
+  <tr>
+    <td style="color:var(--muted);font-size:.82rem">${p.date}</td>
+    <td style="font-family:var(--mono);color:var(--purple);font-weight:600">${p.amt}</td>
+    <td style="font-family:var(--mono);font-size:.76rem;color:var(--muted)">${p.wallet}</td>
+    <td style="font-family:var(--mono);font-size:.73rem;color:var(--muted)">${p.tx}</td>
+    <td><span class="pill paid">CONFIRMED</span></td>
+  </tr>`).join('');
+</script>
+</body>
+</html>
