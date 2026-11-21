@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support – Top Dollar Expert Advisors</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0c0f;--surface:#111418;--card:#161b22;--border:#1e2530;--cyan:#00d4ff;--green:#00e676;--red:#ff4757;--text:#e8ecf0;--muted:#8793a6;--font-display:'Bebas Neue',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+/* HEADER / NAV */
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 48px;border-bottom:1px solid var(--border);background:rgba(10,12,15,.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo{font-family:var(--font-display);font-size:1.6rem;letter-spacing:1px;color:var(--text);text-decoration:none}
+.logo span{color:var(--cyan)}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.875rem;font-weight:500;letter-spacing:.5px;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan)}
+.btn-primary{background:var(--cyan);color:#000;padding:8px 22px;border-radius:6px;border:none;font-family:var(--font-display);font-size:1rem;letter-spacing:1px;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.btn-primary:hover{opacity:.85}
+
+/* PAGE CONTENT (matches your support code's class names) */
+.section{max-width:1200px;margin:0 auto;padding:72px 48px}
+.section-header{margin-bottom:40px}
+.eyebrow{font-family:var(--font-mono);font-size:.75rem;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px}
+.heading{font-family:var(--font-display);font-size:clamp(2.6rem,6vw,4.4rem);line-height:1;letter-spacing:1px}
+.hl{color:var(--cyan)}
+.support-grid{display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start}
+.contact-form,.support-info{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px}
+.form-title{font-family:var(--font-display);font-size:1.6rem;letter-spacing:1px;margin-bottom:20px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.form-label{font-size:.8rem;font-weight:600;color:var(--muted)}
+.form-input,.form-select,.form-textarea{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:var(--font-body);font-size:.9rem;width:100%;transition:border-color .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--cyan);outline:none}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted)}
+.form-textarea{min-height:130px;resize:vertical}
+.form-submit{width:100%;background:var(--cyan);color:#000;border:none;border-radius:8px;padding:14px;font-family:var(--font-display);font-size:1.15rem;letter-spacing:1.5px;cursor:pointer;transition:opacity .2s}
+.form-submit:hover{opacity:.88}
+.support-info h3{font-family:var(--font-display);font-size:1.4rem;letter-spacing:1px;margin-bottom:14px}
+.support-info p{font-size:.88rem;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.support-info a{color:var(--cyan)}
+
+/* One simple entrance, switched off for reduced motion */
+.animate{animation:rise .5s ease both}
+.animate-d1{animation-delay:.05s}.animate-d2{animation-delay:.15s}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.animate{animation:none}}
+
+@media(max-width:900px){.support-grid{grid-template-columns:1fr}}
+@media(max-width:700px){
+  nav{padding:14px 20px}.nav-links{display:none}
+  .section{padding:48px 20px}.contact-form,.support-info{padding:24px 20px}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<nav>
+  <a class="logo" href="index.html">TOP <span>DOLLAR</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="live-results-section.html">Live Results</a></li>
+    <li><a href="store.html">Store</a></li>
+    <li><a href="manual.html">Manual</a></li>
+    <li><a href="support.html" class="active" aria-current="page">Support</a></li>
+  </ul>
+  <a class="btn-primary" href="store.html">Get an EA</a>
+</nav>
+
+<!-- ===== PASTE YOUR SUPPORT CONTENT BELOW (replace this whole block) ===== -->
+<div class="page" id="page-support">
+  <div class="section">
+    <div class="section-header">
+      <div class="eyebrow animate animate-d1">Help Center</div>
+      <h1 class="heading animate animate-d2">We're here to <span class="hl">help</span></h1>
+    </div>
+
+    <div class="support-grid">
+      <form class="contact-form animate animate-d2" action="#" method="post">
+        <div class="form-title">Send us a message</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label" for="fn">First name</label><input id="fn" type="text" class="form-input" placeholder="John" required></div>
+          <div class="form-group"><label class="form-label" for="ln">Last name</label><input id="ln" type="text" class="form-input" placeholder="Doe"></div>
+        </div>
+        <div class="form-group"><label class="form-label" for="em">Email address</label><input id="em" type="email" class="form-input" placeholder="john@example.com" required></div>
+        <div class="form-group"><label class="form-label" for="tp">Topic</label>
+          <select id="tp" class="form-select"><option>Installing my EA</option><option>License or payment</option><option>Settings and risk</option><option>Something else</option></select>
+        </div>
+        <div class="form-group"><label class="form-label" for="ms">Message</label><textarea id="ms" class="form-textarea" placeholder="Tell us what's happening" required></textarea></div>
+        <button class="form-submit" type="submit">Send message</button>
+      </form>
+
+      <aside class="support-info animate animate-d2">
+        <h3>Before you write</h3>
+        <p>Most setup questions are answered in the <a href="manual.html">manual</a>.</p>
+        <p>Include your MT5 account number and the EA name so we can help faster.</p>
+      </aside>
+    </div>
+  </div>
+</div>
+<!-- ===== END SUPPORT CONTENT ===== -->
+
+</body>
+</html>
