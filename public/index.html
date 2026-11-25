@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Top Dollar — Elite Expert Advisors</title>
+<meta name="description" content="Institutional-grade Expert Advisors engineered for consistent profits. Proven backtests, live verified results, and 24/7 automated execution on MetaTrader 4 &amp; 5.">
+<link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
@@ -1921,6 +1923,21 @@ a.nav-login { border-color: var(--border2); color: var(--text2); }
 @media (max-width: 520px) { footer { grid-template-columns: 1fr; } }
 
 
+/* ══════ MOBILE NAV + HERO (860px and below) ══════ */
+.nav-toggle { display: none; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 6px; width: 40px; height: 36px; font-size: 18px; cursor: pointer; }
+@media (max-width: 860px) {
+  nav { padding: 0 20px; height: auto; min-height: 64px; flex-wrap: wrap; }
+  .nav-logo { white-space: nowrap; font-size: 20px; line-height: 64px; }
+  .nav-toggle { display: block; }
+  .nav-links, .nav-actions { display: none; width: 100%; }
+  nav.open { background: rgba(8,12,16,0.97); padding-bottom: 16px; }
+  nav.open .nav-links { display: flex; flex-direction: column; gap: 2px; }
+  nav.open .nav-links a { display: block; padding: 12px 14px; }
+  nav.open .nav-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .hero { padding: 56px 20px; }
+  .hero-stats { gap: 28px; }
+}
+
 /* ══════ MEMBER LOGIN OVERLAY (opens login.html on top of Home) ══════ */
 #login-overlay { position: fixed; inset: 0; z-index: 1000; background: #0a0c0f; display: none; }
 #login-overlay.open { display: block; }
@@ -1935,7 +1952,7 @@ a.nav-login { border-color: var(--border2); color: var(--text2); }
 </head>
 <body data-page="home">
 
-<nav id="site-nav"></nav>
+<nav id="site-nav" aria-label="Main"></nav>
 
 <!-- ══════════ HOME ══════════ -->
 <div class="page active" id="page-home">
@@ -2073,11 +2090,20 @@ window.SITE = {
     }).join('');
     nav.innerHTML =
       '<a class="nav-logo" href="' + esc(S.pages.home.href) + '">' + esc(S.brand.name) + ' <span>' + esc(S.brand.suffix) + '</span></a>' +
+      '<button type="button" class="nav-toggle" id="nav-toggle" aria-label="Menu" aria-expanded="false">☰</button>' +
       '<ul class="nav-links">' + items + '</ul>' +
       '<div class="nav-actions" id="nav-auth">' +
         '<a class="nav-logout nav-login" href="' + esc(S.pages.login.href) + '">' + esc(S.pages.login.label) + '</a>' +
         '<a class="nav-cta" href="' + esc(S.pages.store.href) + '">Get Started →</a>' +
       '</div>';
+    var toggle = document.getElementById('nav-toggle');
+    toggle.addEventListener('click', function () {
+      var open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    nav.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('a')) { nav.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+    });
   }
 
   // ── FOOTER ──
