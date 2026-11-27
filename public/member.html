@@ -805,6 +805,12 @@ document.getElementById('a-pay').innerHTML = PAYS.map(p=>`
     <td style="font-family:var(--mono);font-size:.73rem;color:var(--muted)">${p.tx}</td>
     <td><span class="pill paid">CONFIRMED</span></td>
   </tr>`).join('');
+  // Stay logged in on refresh
+(async () => {
+  let stored = 'member';
+  try { stored = localStorage.getItem('portalRole') || 'member'; } catch (e) {}
+  await enterPortal(stored, false);
+})();
 </script>
 </body>
 </html>
