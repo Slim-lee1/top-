@@ -370,26 +370,28 @@ body { background: var(--bg); color: var(--text); font-family: var(--body); min-
         </div>
         <div class="form-group">
           <label class="form-label">Password</label>
-          <input class="form-input" type="password" placeholder="••••••••">
+          <input class="form-input" type="password" placeholder="••••••••" id="login-password">
         </div>
-        <button class="submit-btn member-btn" id="login-submit" onclick="handleLogin()">SIGN IN</button>
+       <div id="login-error" style="color:var(--red);font-size:.8rem;margin-bottom:10px;display:none"></div>
+       <button class="submit-btn member-btn" id="login-submit" onclick="handleLogin()">SIGN IN</button>
         <div class="form-footer">Forgot password? <a>Reset here</a></div>
       </div>
 
-      <div id="form-register" style="display:none">
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" placeholder="First"></div>
-          <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" placeholder="Last"></div>
-        </div>
-        <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" placeholder="you@example.com"></div>
-        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Choose a strong password"></div>
-        <div class="form-group" id="reg-wallet" style="display:none">
-          <label class="form-label">Crypto Wallet Address (payouts)</label>
-          <input class="form-input" type="text" placeholder="BTC / ETH / USDT address">
-        </div>
-        <button class="submit-btn member-btn" id="register-submit" onclick="handleRegister()">CREATE ACCOUNT</button>
-        <div class="form-footer">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
-      </div>
+<div id="form-register" style="display:none">
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" placeholder="First" id="reg-first"></div>
+    <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" placeholder="Last" id="reg-last"></div>
+  </div>
+  <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" placeholder="you@example.com" id="reg-email"></div>
+  <div class="form-group"><label class="form-label">Password (8+ characters)</label><input class="form-input" type="password" placeholder="Choose a strong password" id="reg-password"></div>
+  <div class="form-group" id="reg-wallet" style="display:none">
+    <label class="form-label">Crypto Wallet Address (payouts)</label>
+    <input class="form-input" type="text" placeholder="BTC / ETH / USDT address" id="reg-wallet-input">
+  </div>
+  <div id="register-error" style="color:var(--red);font-size:.8rem;margin-bottom:10px;display:none"></div>
+  <button class="submit-btn member-btn" id="register-submit" onclick="handleRegister()">CREATE ACCOUNT</button>
+  <div class="form-footer">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
+</div>
     </div>
   </div>
 </div>
@@ -660,30 +662,81 @@ function switchTab(tab) {
   document.getElementById('form-register').style.display = tab==='register' ? 'block' : 'none';
 }
 
-function handleLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  if (!email) return;
-  go(role, email.split('@')[0]);
+async function api(path, method, body) {
+  const res = await fetch(path, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, data };
 }
-function handleRegister() { go(role, 'New User'); }
 
-function go(r, name) {
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+async function handleLogin() {
+  showError('login-error', '');
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) return showError('login-error', 'Enter your email and password');
+  const { ok, data } = await api('/api/login', 'POST', { email, password });
+  if (!ok) return showError('login-error', data.error || 'Login failed');
+  await enterPortal(role, true);
+}
+
+async function handleRegister() {
+  showError('register-error', '');
+  const first = document.getElementById('reg-first').value.trim();
+  const last = document.getElementById('reg-last').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const wallet = document.getElementById('reg-wallet-input').value.trim();
+  if (role === 'affiliate' && !wallet) return showError('register-error', 'Enter a payout wallet address');
+  const { ok, data } = await api('/api/signup', 'POST', { name: (first + ' ' + last).trim(), email, password });
+  if (!ok) return showError('register-error', data.error || 'Signup failed');
+  if (role === 'affiliate') await api('/api/affiliate/join', 'POST', { payout_address: wallet });
+  await enterPortal(role, true);
+}
+
+async function enterPortal(preferred, allowJoin) {
+  const me = await api('/api/me', 'GET');
+  if (!me.ok) return;
+  let code = me.data.affiliateCode;
+  let isAff = me.data.isAffiliate;
+
+  if (preferred === 'affiliate' && !isAff && allowJoin) {
+    const j = await api('/api/affiliate/join', 'POST', {});
+    code = j.data.code;
+    isAff = true;
+  }
+
+  const showAff = preferred === 'affiliate' && isAff;
+  const name = me.data.name || me.data.email.split('@')[0];
+  try { localStorage.setItem('portalRole', showAff ? 'affiliate' : 'member'); } catch (e) {}
+
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  if (r === 'member') {
-    document.getElementById('member-screen').classList.add('active');
-    document.getElementById('m-av').textContent    = name.slice(0,2).toUpperCase();
-    document.getElementById('m-name').textContent  = name;
-    document.getElementById('m-greet').textContent = name.split(' ')[0];
-  } else {
+  if (showAff) {
     document.getElementById('affiliate-screen').classList.add('active');
-    document.getElementById('a-av').textContent   = name.slice(0,2).toUpperCase();
+    document.getElementById('a-av').textContent = name.slice(0, 2).toUpperCase();
     document.getElementById('a-name').textContent = name;
+    document.getElementById('ref-link').textContent = location.origin + '/ref/' + code;
+  } else {
+    document.getElementById('member-screen').classList.add('active');
+    document.getElementById('m-av').textContent = name.slice(0, 2).toUpperCase();
+    document.getElementById('m-name').textContent = name;
+    document.getElementById('m-greet').textContent = name.split(' ')[0];
   }
 }
 
-function logout() {
+async function logout() {
+  await api('/api/logout', 'POST');
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('login-screen').classList.add('active');
+  document.getElementById('login-password').value = '';
 }
 
 function mNav(el) {
